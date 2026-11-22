@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TASKO — Conectando Serviços com Confiança</title>
+  <style>
+    :root {
+      --emerald-main: #064E3B;
+      --deep-pine: #022C22;
+      --pure-emerald: #059669;
+      --emerald-soft: #ECFDF5;
+      --emerald-border: #A7F3D0;
+      --gold: #D97706;
+      --gold-soft: #FEF3C7;
+      --bg: #F8FAFC;
+      --card: #FFFFFF;
+      --text: #0F172A;
+      --muted: #64748B;
+      --border: #E2E8F0;
+      --danger: #DC2626;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', Arial, sans-serif; }
+
+    body {
+      background: radial-gradient(circle at top, #064E3B 0%, #022C22 65%, #011B15 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 12px;
+      color: var(--text);
+    }
+
+    /* Barra superior externa para demonstração no projetor */
+    .demo-topbar {
+      width: 100%;
+      max-width: 410px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #A7F3D0;
+      font-size: 12px;
+      margin-bottom: 10px;
+      padding: 0 6px;
+    }
+    .demo-pill {
+      background: rgba(5, 150, 105, 0.25);
+      border: 1px solid rgba(167, 243, 208, 0.35);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      color: #ECFDF5;
+    }
+
+    /* Moldura Mobile */
+    .phone-frame {
+      width: 100%;
+      max-width: 410px;
+      height: 800px;
+      background: var(--bg);
+      border-radius: 34px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45), 0 0 0 6px #033A2C;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    @media (max-width: 460px) {
+      body { padding: 0; background: var(--bg); }
+      .demo-topbar { display: none; }
+      .phone-frame { max-width: 100%; height: 100vh; border-radius: 0; box-shadow: none; }
+    }
+
+    .screen {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 84px;
+      animation: fadeIn 0.2s ease;
+    }
+    .screen.active { display: block; }
+    #screen-auth { padding-bottom: 24px; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Auth Header */
+    .auth-header {
+      background: linear-gradient(145deg, var(--emerald-main), var(--deep-pine));
+      padding: 30px 20px 58px;
+      text-align: center;
+      color: #fff;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+    }
+    .brand-title { font-size: 26px; font-weight: 900; letter-spacing: 1.5px; margin-top: 8px; }
+    .brand-sub { font-size: 12px; color: #A7F3D0; margin-top: 4px; }
+
+    .auth-card {
+      background: #fff;
+      margin: -34px 18px 20px;
+      padding: 20px;
+      border-radius: 22px;
+      box-shadow: 0 10px 28px rgba(2, 44, 34, 0.12);
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #F1F5F9;
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    .tab-btn {
+      border: none;
+      background: transparent;
+      padding: 10px;
+      border-radius: 9px;
+      font-weight: 700;
+      font-size: 13px;
+      color: #475569;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: var(--emerald-main);
+      color: #fff;
+    }
+
+    /* Inputs e Botões */
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12px; font-weight: 700; color: #1E293B; margin-bottom: 5px; }
+    .field input, .field select, .field textarea {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 11px;
+      font-size: 13px;
+      background: #F8FAFC;
+      outline: none;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: var(--pure-emerald);
+      background: #fff;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.15s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: linear-gradient(135deg, var(--pure-emerald), #047857); color: #fff; }
+    .btn-dark { background: var(--deep-pine); color: #fff; }
+    .btn-outline { background: #fff; color: var(--deep-pine); border: 1.5px solid #CBD5E1; }
+    .btn-danger { background: #FEE2E2; color: var(--danger); }
+    .btn-sm { padding: 8px 12px; font-size: 12px; width: auto; border-radius: 9px; }
+
+    /* Seletor de Perfil no Cadastro */
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .role-opt {
+      border: 1.5px solid #CBD5E1;
+      border-radius: 10px;
+      padding: 8px 4px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #F8FAFC;
+      color: #334155;
+    }
+    .role-opt.selected {
+      border-color: var(--pure-emerald);
+      background: var(--emerald-soft);
+      color: var(--emerald-main);
+    }
+
+    /* Header interno */
+    .app-header {
+      padding: 18px 18px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .loc-label { font-size: 10px; font-weight: 800; color: var(--muted); text-transform: uppercase; }
+    .loc-value { font-size: 15px; font-weight: 800; color: var(--deep-pine); }
+    .avatar-btn {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--emerald-main); color: #fff;
+      font-weight: 800; font-size: 13px; border: 2px solid var(--gold);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+
+    .section { padding: 16px 18px; }
+    .section-title { font-size: 16px; font-weight: 800; color: var(--deep-pine); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+
+    /* Busca */
+    .search-box {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .search-box input {
+      flex: 1;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+    .search-box button {
+      padding: 0 16px;
+      border-radius: 14px;
+      border: none;
+      background: var(--emerald-main);
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* Banner */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--emerald-main), var(--deep-pine));
+      color: #fff;
+      border-radius: 18px;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .cta-banner h3 { font-size: 15px; font-weight: 800; }
+    .cta-banner p { font-size: 11px; color: #A7F3D0; margin-top: 3px; }
+    .cta-banner button {
+      background: var(--pure-emerald);
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 12px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    /* Grid de Categorias com Imagens */
+    .cat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .cat-card {
+      position: relative;
+      height: 126px;
+      border-radius: 18px;
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 12px;
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(2, 44, 34, 0.12);
+    }
+    .cat-card.full { grid-column: span 2; height: 118px; }
+    .cat-card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.45;
+    }
+    .cat-card-content { position: relative; z-index: 2; }
+    .cat-icon { font-size: 20px; margin-bottom: 4px; }
+    .cat-name { font-size: 15px; font-weight: 800; }
+    .cat-sub { font-size: 11px; opacity: 0.9; }
+
+    /* Chips */
+    .chips {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+    }
+    .chip {
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .chip.active { background: var(--emerald-main); color: #fff; border-color: var(--emerald-main); }
+
+    /* Cards de Anúncios */
+    .ad-card {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(2, 44, 34, 0.05);
+    }
+    .ad-thumb {
+      width: 84px;
+      height: 84px;
+      border-radius: 12px;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: #fff;
+    }
+    .ad-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.78; }
+    .ad-info { flex: 1; min-width: 0; }
+    .ad-top { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 4px; }
+    .badge {
+      font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 6px;
+      background: var(--emerald-soft); color: var(--emerald-main); text-transform: uppercase;
+    }
+    .badge-gold { background: var(--gold-soft); color: #B45309; }
+    .badge-red { background: #FEE2E2; color: var(--danger); }
+    .rating { font-size: 12px; font-weight: 800; color: var(--gold); }
+    .ad-title { font-size: 14px; font-weight: 800; color: var(--deep-pine); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ad-provider { font-size: 12px; color: var(--muted); margin: 2px 0 6px; }
+    .ad-footer { display: flex; justify-content: space-between; align-items: center; }
+    .ad-price { font-size: 13px; font-weight: 800; color: var(--pure-emerald); }
+
+    /* Tela de Detalhes */
+    .detail-cover {
+      height: 200px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 56px;
+      color: #fff;
+      overflow: hidden;
+    }
+    .detail-cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.55; }
+    .back-btn {
+      position: absolute; top: 16px; left: 16px; z-index: 3;
+      width: 38px; height: 38px; border-radius: 12px;
+      border: none; background: rgba(2, 44, 34, 0.7); color: #fff;
+      font-size: 18px; font-weight: 800; cursor: pointer;
+    }
+    .detail-body {
+      background: #fff;
+      margin-top: -22px;
+      border-top-left-radius: 26px;
+      border-top-right-radius: 26px;
+      position: relative;
+      z-index: 2;
+      padding: 20px 18px 28px;
+      min-height: 520px;
+    }
+    .metrics-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0; }
+    .metric-box { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px 6px; text-align: center; }
+    .metric-val { font-size: 14px; font-weight: 800; color: var(--deep-pine); }
+    .metric-lbl { font-size: 10px; color: var(--muted); margin-top: 2px; }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 18px; }
+    .tag-item { background: #F1F5F9; color: #1E293B; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; }
+
+    /* Cards de Atividade / Pedido */
+    .order-card {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .order-msg {
+      background: var(--bg);
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      color: #334155;
+      margin: 8px 0;
+      border-left: 3px solid var(--pure-emerald);
+    }
+    .order-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .contact-unlocked {
+      background: var(--emerald-soft);
+      border: 1px solid var(--emerald-border);
+      color: var(--emerald-main);
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    /* Bottom Nav */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 68px;
+      background: #fff;
+      border-top: 1px solid var(--border);
+      display: none;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 20;
+    }
+    .bottom-nav.visible { display: flex; }
+    .nav-item {
+      border: none;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      position: relative;
+    }
+    .nav-item.active { color: var(--pure-emerald); }
+    .nav-icon { font-size: 19px; }
+    .nav-badge {
+      position: absolute; top: -4px; right: -8px;
+      background: var(--gold); color: #fff;
+      font-size: 10px; font-weight: 800;
+      min-width: 17px; height: 17px; border-radius: 999px;
+      display: none; align-items: center; justify-content: center; padding: 0 4px;
+    }
+
+    /* Modais */
+    .modal-backdrop {
+      position: absolute; inset: 0;
+      background: rgba(2, 44, 34, 0.65);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 50;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-sheet {
+      width: 100%;
+      background: #fff;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      padding: 20px;
+      max-height: 85%;
+      overflow-y: auto;
+    }
+
+    /* Toast */
+    .toast {
+      position: absolute;
+      top: 14px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--deep-pine);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      z-index: 100;
+      display: none;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      text-align: center;
+      max-width: 90%;
+    }
+    .toast.show { display: block; }
+    .empty-state { text-align: center; padding: 34px 16px; color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="demo-topbar">
+    <span><strong>TASKO</strong> • Emerald Trust MVP</span>
+    <span class="demo-pill">● Servidor Node.js Ativo</span>
+  </div>
+
+  <div class="phone-frame">
+    <div id="toast" class="toast"></div>
+
+    <!-- =====================================
+         TELA 1: LOGIN & CADASTRO REAL
+         ===================================== -->
+    <section id="screen-auth" class="screen active">
+      <div class="auth-header">
+        <!-- Logo Oficial TASKO (Diamante + Luva/Mão + 3 Estrelas) -->
+        <svg width="74" height="74" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M40 3L42.5 9L49 9.5L44 13.5L45.5 20L40 16.5L34.5 20L36 13.5L31 9.5L37.5 9L40 3Z" fill="#F59E0B"/>
+          <path d="M22 9L23.8 13L28 13.3L24.8 16L25.8 20L22 17.8L18.2 20L19.2 16L16 13.3L20.2 13L22 9Z" fill="#D97706"/>
+          <path d="M58 9L59.8 13L64 13.3L60.8 16L61.8 20L58 17.8L54.2 20L55.2 16L52 13.3L56.2 13L58 9Z" fill="#D97706"/>
+          <path d="M20 24H60L72 40L40 76L8 40L20 24Z" fill="#059669" stroke="#022C22" stroke-width="2.5"/>
+          <path d="M20 24L40 40H8L20 24Z" fill="#10B981"/>
+          <path d="M60 24L40 40H72L60 24Z" fill="#047857"/>
+          <path d="M20 24H60L40 40L20 24Z" fill="#34D399" opacity="0.65"/>
+          <path d="M18 52L34 45C38 43 43 46 46 50L52 56" stroke="#022C22" stroke-width="6" stroke-linecap="round"/>
+          <path d="M62 52L46 45C42 43 37 46 34 50L28 56" stroke="#FBBF24" stroke-width="6" stroke-linecap="round"/>
+        </svg>
+        <div class="brand-title">TASKO</div>
+        <div class="brand-sub">Serviços locais com segurança e confiança</div>
+      </div>
+
+      <div class="auth-card">
+        <div class="tabs">
+          <button class="tab-btn active" id="tab-login" onclick="switchAuthTab('login')">Entrar</button>
+          <button class="tab-btn" id="tab-register" onclick="switchAuthTab('register')">Criar Conta</button>
+        </div>
+
+        <!-- Form Login -->
+        <form id="form-login" onsubmit="handleLogin(event)">
+          <div class="field">
+            <label>E-mail</label>
+            <input type="email" id="login-email" placeholder="ex: carlos@tasko.com" required />
+          </div>
+          <div class="field">
+            <label>Senha</label>
+            <input type="password" id="login-senha" placeholder="••••••" required />
+          </div>
+          <button type="submit" class="btn btn-primary">Entrar no TASKO</button>
+          <p style="font-size:11px; color:#64748B; text-align:center; margin-top:12px;">
+            Conta teste pronta: <strong>carlos@tasko.com</strong> / senha <strong>123456</strong><br/>
+            Ou clique em <strong>Criar Conta</strong> para cadastrar novas contas ao vivo!
+          </p>
+        </form>
+
+        <!-- Form Cadastro -->
+        <form id="form-register" style="display:none;" onsubmit="handleRegister(event)">
+          <label style="display:block; font-size:11px; font-weight:800; color:#022C22; margin-bottom:6px;">SEU PERFIL NO APP:</label>
+          <div class="role-grid">
+            <div class="role-opt selected" data-role="CLIENTE" onclick="selectRole(this)">🙋 Cliente</div>
+            <div class="role-opt" data-role="PRESTADOR" onclick="selectRole(this)">🛠️ Prestador</div>
+            <div class="role-opt" data-role="AMBOS" onclick="selectRole(this)">🔄 Ambos</div>
+          </div>
+
+          <div class="field">
+            <label>Nome Completo</label>
+            <input type="text" id="reg-nome" placeholder="Ex: João da Silva" required />
+          </div>
+          <div class="field">
+            <label>E-mail</label>
+            <input type="email" id="reg-email" placeholder="joao@email.com" required />
+          </div>
+          <div class="field">
+            <label>WhatsApp / Celular</label>
+            <input type="text" id="reg-telefone" placeholder="(11) 99999-8888" required />
+          </div>
+          <div class="field">
+            <label>Região / Bairro</label>
+            <input type="text" id="reg-regiao" placeholder="Ex: Zona Sul, SP" value="Zona Sul, SP" required />
+          </div>
+          <div class="field">
+            <label>Senha</label>
+            <input type="password" id="reg-senha" placeholder="Mínimo 4 caracteres" minlength="4" required />
+          </div>
+          <button type="submit" class="btn btn-primary">Criar Conta e Entrar</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- =====================================
+         TELA 2: BUSCA E CATEGORIAS TEMÁTICAS
+         ===================================== -->
+    <section id="screen-home" class="screen">
+      <div class="app-header">
+        <div>
+          <div class="loc-label">Bem-vindo ao TASKO</div>
+          <div class="loc-value" id="home-user-greeting">Olá!</div>
+        </div>
+        <button class="avatar-btn" id="home-avatar" onclick="navigate('profile')">US</button>
+      </div>
+
+      <div class="section">
+        <div class="search-box">
+          <input type="text" id="home-search-input" placeholder="Qual serviço você precisa hoje?" onkeydown="if(event.key==='Enter') searchFromHome()" />
+          <button onclick="searchFromHome()">Buscar</button>
+        </div>
+
+        <div class="cta-banner" id="home-cta-banner">
+          <div>
+            <h3 id="cta-title">Oferece algum serviço?</h3>
+            <p id="cta-desc">Publique seu anúncio e receba pedidos reais</p>
+          </div>
+          <button id="cta-btn" onclick="handleBannerClick()">Publicar</button>
+        </div>
+
+        <div class="section-title">
+          <span>Escolha pela Profissão</span>
+          <span style="font-size:12px; color:var(--pure-emerald); cursor:pointer;" onclick="openMural('Todos')">Ver todos</span>
+        </div>
+
+        <div class="cat-grid" id="categories-grid"></div>
+      </div>
+    </section>
+
+    <!-- =====================================
+         TELA 3: MURAL DE ANÚNCIOS
+         ===================================== -->
+    <section id="screen-mural" class="screen">
+      <div class="app-header">
+        <div>
+          <div class="loc-label">Explorar Serviços</div>
+          <div class="loc-value">Profissionais Disponíveis</div>
+        </div>
+        <button class="btn btn-primary btn-sm" id="mural-add-btn" style="display:none;" onclick="navigate('publish')">+ Anunciar</button>
+      </div>
+
+      <div class="section">
+        <div class="search-box">
+          <input type="text" id="mural-search" placeholder="Filtrar por nome, serviço ou bairro..." oninput="loadServicos()" />
+        </div>
+        <div class="chips" id="mural-chips"></div>
+        <div id="mural-list"></div>
+      </div>
+    </section>
+
+    <!-- =====================================
+         TELA 4: DETALHES DO SERVIÇO
+         ===================================== -->
+    <section id="screen-detail" class="screen">
+      <div id="detail-content"></div>
+    </section>
+
+    <!-- =====================================
+         TELA 5: PUBLICAR SERVIÇO (PRESTADOR)
+         ===================================== -->
+    <section id="screen-publish" class="screen">
+      <div class="app-header">
+        <div>
+          <div class="loc-label">Área do Prestador</div>
+          <div class="loc-value">Publicar Novo Serviço</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <form id="form-publish" onsubmit="handlePublishService(event)">
+          <div class="field">
+            <label>Categoria / Profissão</label>
+            <select id="pub-categoria" required>
+              <option value="Encanador">🔧 Encanador</option>
+              <option value="Eletricista">⚡ Eletricista</option>
+              <option value="Mestre de Obras">🧱 Mestre de Obras</option>
+              <option value="Carpinteiro">🪚 Carpinteiro</option>
+              <option value="Lavador de Sofá">🛋️ Lavador de Sofá</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Título do Anúncio</label>
+            <input type="text" id="pub-titulo" placeholder="Ex: Eletricista Residencial Rápido e Seguro" required />
+          </div>
+          <div class="field">
+            <label>Valor Base / Visita (R$)</label>
+            <input type="number" id="pub-preco" placeholder="Ex: 100" min="0" required />
+          </div>
+          <div class="field">
+            <label>Região de Atendimento</label>
+            <input type="text" id="pub-regiao" placeholder="Ex: Zona Sul, SP" required />
+          </div>
+          <div class="field">
+            <label>Descrição Detalhada</label>
+            <textarea id="pub-descricao" rows="3" placeholder="Conte sua experiência, horários e diferenciais..." required></textarea>
+          </div>
+          <div class="field">
+            <label>Serviços Inclusos (separados por vírgula)</label>
+            <input type="text" id="pub-inclusos" placeholder="Ex: Troca de chuveiro, Tomadas, Disjuntores" />
+          </div>
+          <button type="submit" class="btn btn-primary">Publicar Anúncio Agora</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- =====================================
+         TELA 6: CENTRAL DE ATIVIDADES (CONTRATAÇÕES)
+         ===================================== -->
+    <section id="screen-activities" class="screen">
+      <div class="app-header">
+        <div>
+          <div class="loc-label">Fluxo de Negociação</div>
+          <div class="loc-value">Minhas Atividades</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="loadActivities()">Atualizar</button>
+      </div>
+      <div class="section" id="activities-list"></div>
+    </section>
+
+    <!-- =====================================
+         TELA 7: PERFIL E TROCA DE CONTA
+         ===================================== -->
+    <section id="screen-profile" class="screen">
+      <div class="app-header">
+        <div>
+          <div class="loc-label">Minha Conta</div>
+          <div class="loc-value">Perfil do Usuário</div>
+        </div>
+      </div>
+      <div class="section" id="profile-content"></div>
+    </section>
+
+    <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
+    <nav class="bottom-nav" id="bottom-nav">
+      <button class="nav-item active" data-target="home" onclick="navigate('home')">
+        <span class="nav-icon">🏠</span><span>Início</span>
+      </button>
+      <button class="nav-item" data-target="mural" onclick="openMural('Todos')">
+        <span class="nav-icon">🔍</span><span>Anúncios</span>
+      </button>
+      <button class="nav-item" id="nav-publish" data-target="publish" onclick="navigate('publish')" style="display:none;">
+        <span class="nav-icon">➕</span><span>Anunciar</span>
+      </button>
+      <button class="nav-item" data-target="activities" onclick="navigate('activities')">
+        <span class="nav-icon">📋</span><span>Pedidos</span>
+        <span class="nav-badge" id="activities-badge">0</span>
+      </button>
+      <button class="nav-item" data-target="profile" onclick="navigate('profile')">
+        <span class="nav-icon">👤</span><span>Perfil</span>
+      </button>
+    </nav>
+
+    <!-- MODAL DE CONTRATAÇÃO (CLIENTE) -->
+    <div class="modal-backdrop" id="modal-hire">
+      <div class="modal-sheet">
+        <h3 style="color:var(--deep-pine); margin-bottom:6px;">Solicitar / Contratar Serviço</h3>
+        <p id="hire-service-name" style="font-size:12px; color:var(--muted); margin-bottom:14px;"></p>
+        <form onsubmit="submitContratacao(event)">
+          <div class="field">
+            <label>Descreva o que você precisa</label>
+            <textarea id="hire-msg" rows="3" placeholder="Ex: Preciso trocar a fiação do chuveiro e instalar duas tomadas na cozinha." required></textarea>
+          </div>
+          <div class="field">
+            <label>Data / Período desejado</label>
+            <input type="text" id="hire-date" placeholder="Ex: Amanhã à tarde" required />
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn btn-outline" onclick="closeModal('modal-hire')">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Enviar Solicitação</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL DE AVALIAÇÃO (PÓS-CONCLUSÃO) -->
+    <div class="modal-backdrop" id="modal-rate">
+      <div class="modal-sheet">
+        <h3 style="color:var(--deep-pine); margin-bottom:10px;">Avaliar Serviço Concluído</h3>
+        <form onsubmit="submitAvaliacao(event)">
+          <div class="field">
+            <label>Nota (1 a 5 estrelas)</label>
+            <select id="rate-nota">
+              <option value="5">★★★★★ — 5 (Excelente)</option>
+              <option value="4">★★★★☆ — 4 (Muito bom)</option>
+              <option value="3">★★★☆☆ — 3 (Regular)</option>
+              <option value="2">★★☆☆☆ — 2 (Ruim)</option>
+              <option value="1">★☆☆☆☆ — 1 (Péssimo)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Comentário</label>
+            <textarea id="rate-comentario" rows="2" placeholder="Profissional pontual e serviço bem feito!" required></textarea>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn btn-outline" onclick="closeModal('modal-rate')">Fechar</button>
+            <button type="submit" class="btn btn-primary">Enviar Avaliação</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
