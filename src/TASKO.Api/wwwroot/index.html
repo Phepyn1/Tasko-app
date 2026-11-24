@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TASKO — Conectando serviços com confiança</title>
+  <meta name="description" content="TASKO é o marketplace que conecta quem precisa de um serviço a profissionais de confiança, com contato protegido, avaliações reais e moderação ativa." />
+  <meta name="theme-color" content="#064e3b" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/styles.css?v=20261123-3" />
+</head>
+<body data-view="auth">
+  <!-- ============================ Autenticação ============================ -->
+  <div id="auth-view" class="auth">
+    <div class="auth__inner">
+      <aside class="auth__brand">
+        <a class="brand brand--light" href="#/home" aria-label="TASKO">
+          <span class="brand__mark">T</span>
+          <span class="brand__word">TASKO<small>serviços com confiança</small></span>
+        </a>
+
+        <p class="auth__eyebrow">Marketplace de serviços</p>
+        <h1>Conectando serviços<br />com <span>confiança</span>.</h1>
+        <p class="auth__lead">
+          Publique o que você oferece ou o que precisa resolver. Negocie com segurança,
+          libere o contato só depois do aceite e avalie quem realmente entregou.
+        </p>
+
+        <ul class="auth__features">
+          <li>
+            <span class="auth__feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
+            </span>
+            <span><strong>Contato protegido</strong><small>E-mail e telefone liberados apenas após o aceite da proposta.</small></span>
+          </li>
+          <li>
+            <span class="auth__feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.8 6.2 20.9l1.1-6.5L2.6 9.8l6.5-.9z"/></svg>
+            </span>
+            <span><strong>Avaliações reais</strong><small>Só quem concluiu o serviço pode avaliar a contraparte.</small></span>
+          </li>
+          <li>
+            <span class="auth__feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2.5 20h19z"/><path d="M12 9v5M12 17.5v.5"/></svg>
+            </span>
+            <span><strong>Moderação ativa</strong><small>Denúncias são analisadas por moderadores, nunca ocultadas automaticamente.</small></span>
+          </li>
+        </ul>
+
+        <div class="auth__stats">
+          <div><strong>2</strong><span>tipos de anúncio</span></div>
+          <div><strong>12</strong><span>categorias</span></div>
+          <div><strong>100%</strong><span>auditável</span></div>
+        </div>
+      </aside>
+
+      <section class="auth__panel" aria-labelledby="auth-title">
+        <div class="auth-card">
+          <div class="auth-card__head">
+            <h2 id="auth-title">Bem-vindo de volta</h2>
+            <p id="auth-subtitle">Entre para acompanhar suas propostas e contratações.</p>
+          </div>
+
+          <div class="tabs" role="tablist" aria-label="Entrar ou criar conta">
+            <button class="tab is-active" type="button" role="tab" aria-selected="true" data-auth-tab="login">Entrar</button>
+            <button class="tab" type="button" role="tab" aria-selected="false" data-auth-tab="register">Criar conta</button>
+          </div>
+
+          <form id="login-form" class="auth-form" data-form="login" novalidate>
+            <div class="field">
+              <label for="login-email">E-mail</label>
+              <input class="input" id="login-email" name="email" type="email" autocomplete="email" placeholder="voce@exemplo.com" required />
+            </div>
+            <div class="field">
+              <label for="login-password">Senha</label>
+              <div class="input-wrap">
+                <input class="input" id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Sua senha" required minlength="8" />
+                <button class="input-toggle" type="button" data-action="toggle-password" data-target="login-password" aria-label="Mostrar senha">ver</button>
+              </div>
+            </div>
+            <div class="form-error" data-error hidden></div>
+            <button class="btn btn--primary btn--block" type="submit">Entrar</button>
+            <button class="linklike linklike--center" type="button" data-action="forgot-password">Esqueci minha senha</button>
+          </form>
+
+          <form id="register-form" class="auth-form" data-form="register" hidden novalidate>
+            <div class="field">
+              <label for="register-name">Nome completo</label>
+              <input class="input" id="register-name" name="name" type="text" autocomplete="name" placeholder="Como você quer ser chamado" required minlength="2" maxlength="120" />
+            </div>
+            <div class="field">
+              <label for="register-email">E-mail</label>
+              <input class="input" id="register-email" name="email" type="email" autocomplete="email" placeholder="voce@exemplo.com" required />
+            </div>
+            <div class="field">
+              <label for="register-password">Senha</label>
+              <div class="input-wrap">
+                <input class="input" id="register-password" name="password" type="password" autocomplete="new-password" placeholder="Mínimo 8 caracteres, com letra e número" required minlength="8" maxlength="128" />
+                <button class="input-toggle" type="button" data-action="toggle-password" data-target="register-password" aria-label="Mostrar senha">ver</button>
+              </div>
+              <p class="hint">Use ao menos 8 caracteres, com pelo menos uma letra e um número.</p>
+            </div>
+            <fieldset class="field field--roles">
+              <legend>Como você quer usar a TASKO?</legend>
+              <label class="check">
+                <input type="checkbox" name="roles" value="requester" checked />
+                <span><strong>Solicitante</strong><small>Quero contratar serviços.</small></span>
+              </label>
+              <label class="check">
+                <input type="checkbox" name="roles" value="provider" />
+                <span><strong>Prestador</strong><small>Quero oferecer meus serviços.</small></span>
+              </label>
+            </fieldset>
+            <div class="form-error" data-error hidden></div>
+            <button class="btn btn--primary btn--block" type="submit">Criar minha conta</button>
+            <p class="hint hint--center">Ao criar a conta você concorda com o uso responsável da plataforma.</p>
+          </form>
+
+          <div class="demo-accounts">
+            <button class="demo-accounts__toggle" type="button" data-action="toggle-demo" aria-expanded="false">
+              <span>Contas de demonstração</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </button>
+            <div class="demo-accounts__list" id="demo-accounts-list" hidden>
+              <button type="button" class="demo-account" data-demo-email="ana@tasko.demo" data-demo-password="Demo1234">
+                <span class="avatar avatar--xs">AS</span><span><strong>Ana Souza</strong><small>Solicitante</small></span>
+              </button>
+              <button type="button" class="demo-account" data-demo-email="carlos@tasko.demo" data-demo-password="Demo1234">
+                <span class="avatar avatar--xs">CP</span><span><strong>Carlos Pereira</strong><small>Prestador · Elétrica</small></span>
+              </button>
+              <button type="button" class="demo-account" data-demo-email="mariana@tasko.demo" data-demo-password="Demo1234">
+                <span class="avatar avatar--xs">ML</span><span><strong>Mariana Lima</strong><small>Prestadora · Limpeza</small></span>
+              </button>
+              <button type="button" class="demo-account" data-demo-email="moderador@tasko.local" data-demo-password="Moderador123">
+                <span class="avatar avatar--xs avatar--gold">MO</span><span><strong>Moderação</strong><small>Analisa denúncias</small></span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <p class="auth__note">Modo demonstração: os dados ficam em memória e são reiniciados quando a API para.</p>
+      </section>
+    </div>
+  </div>
+
+  <!-- ============================ Aplicação ============================ -->
+  <div id="shell" class="shell" hidden>
+    <header class="topbar">
+      <div class="topbar__inner container">
+        <a class="brand" href="#/home">
+          <span class="brand__mark">T</span>
+          <span class="brand__word">TASKO<small>serviços com confiança</small></span>
+        </a>
+
+        <nav class="nav" aria-label="Navegação principal">
+          <a class="nav__link" data-nav="home" href="#/home">Início</a>
+          <a class="nav__link" data-nav="explore" href="#/explore">Explorar</a>
+          <a class="nav__link" data-nav="publish" href="#/publish">Publicar</a>
+          <a class="nav__link" data-nav="activities" href="#/activities">Atividades</a>
+          <a class="nav__link" data-nav="moderation" href="#/moderation" data-moderator-only hidden>Moderação</a>
+        </nav>
+
+        <div class="topbar__actions">
+          <button class="icon-btn" type="button" data-action="toggle-notifications" aria-label="Notificações" aria-haspopup="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+            <span class="badge-dot" id="notif-badge" hidden>0</span>
+          </button>
+
+          <div class="user-menu">
+            <button class="user-chip" type="button" data-action="toggle-user-menu" aria-haspopup="true" aria-expanded="false">
+              <span class="avatar avatar--sm" id="user-avatar">T</span>
+              <span class="user-chip__text"><strong id="user-name">Conta</strong><small id="user-role">—</small></span>
+              <svg class="user-chip__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="menu" id="user-menu" hidden>
+              <a href="#/profile" class="menu__item">Meu perfil</a>
+              <a href="#/activities" class="menu__item">Minhas atividades</a>
+              <a href="#/moderation" class="menu__item" data-moderator-only hidden>Moderação</a>
+              <div class="menu__sep"></div>
+              <button type="button" class="menu__item menu__item--danger" data-action="logout">Sair da conta</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="main" class="main" tabindex="-1"></main>
+
+    <footer class="footer">
+      <div class="footer__inner container">
+        <p>© 2026 TASKO · Projeto acadêmico de conclusão de curso.</p>
+        <p class="api-status" id="api-status"><span class="dot"></span> verificando API…</p>
+      </div>
+    </footer>
+
+    <nav class="bottom-nav" aria-label="Navegação rápida">
+      <a href="#/home" data-nav="home" class="bottom-nav__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+        <span>Início</span>
+      </a>
+      <a href="#/explore" data-nav="explore" class="bottom-nav__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <span>Explorar</span>
+      </a>
+      <a href="#/publish" data-nav="publish" class="bottom-nav__fab" aria-label="Publicar anúncio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span>Publicar</span>
+      </a>
+      <a href="#/activities" data-nav="activities" class="bottom-nav__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        <span>Atividades</span>
+      </a>
+      <a href="#/profile" data-nav="profile" class="bottom-nav__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/></svg>
+        <span>Perfil</span>
+      </a>
+    </nav>
+  </div>
+
+  <div id="notif-panel" class="notif-panel" hidden aria-label="Notificações recentes"></div>
+  <div id="modal-root"></div>
+  <div id="toast-root" class="toast-root" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="/views-public.js?v=20261123-3"></script>
+  <script src="/views-account.js?v=20261123-3"></script>
+  <script src="/forms.js?v=20261123-3"></script>
+  <script src="/app.js?v=20261123-3"></script>
+</body>
+</html>

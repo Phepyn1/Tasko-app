@@ -1,2 +1,29 @@
-node_modules/
-db.json
+# Build
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Testes
+TestResults/
+coverage*.json
+coverage*.xml
+
+# Ferramentas / IDEs
+.vs/
+.vscode/
+.idea/
+*.swp
+
+# Ambiente local
+appsettings.Local.json
+.env
+*.pfx
+
+# Sistema
+Thumbs.db
+.DS_Store
