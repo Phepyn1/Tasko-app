@@ -1,0 +1,45 @@
+name: tasko
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tasko-postgres
+    environment:
+      POSTGRES_DB: tasko
+      POSTGRES_USER: tasko
+      POSTGRES_PASSWORD: tasko
+    ports:
+      - "5432:5432"
+    volumes:
+      - tasko-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tasko -d tasko"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tasko-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Ambiente de desenvolvimento local. Em produção use Production + secrets reais.
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: "Host=postgres;Port=5432;Database=tasko;Username=tasko;Password=tasko"
+      Jwt__SigningKey: "${TASKO_JWT_SIGNING_KEY:-dev-only-signing-key-change-me-before-deploy}"
+      Auth__ExposeSensitiveTokens: "true"
+      Database__AutoMigrate: "true"
+      Seed__ModeratorEmail: "${TASKO_MODERATOR_EMAIL:-moderador@tasko.local}"
+      Seed__ModeratorPassword: "${TASKO_MODERATOR_PASSWORD:-Moderador123}"
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+volumes:
+  tasko-postgres-data:

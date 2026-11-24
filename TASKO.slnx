@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/TASKO.Api/TASKO.Api.csproj" />
+    <Project Path="src/TASKO.Application/TASKO.Application.csproj" />
+    <Project Path="src/TASKO.Domain/TASKO.Domain.csproj" />
+    <Project Path="src/TASKO.Infrastructure/TASKO.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TASKO.Tests/TASKO.Tests.csproj" />
+  </Folder>
+</Solution>
